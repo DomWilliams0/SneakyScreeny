@@ -116,7 +116,6 @@ public class HotKey
 		return hotkey.character == character && Arrays.equals(hotkey.mods, mods);
 
 
-
 	}
 
 	public int getVk()

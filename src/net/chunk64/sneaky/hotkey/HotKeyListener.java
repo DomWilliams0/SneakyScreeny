@@ -39,7 +39,6 @@ public class HotKeyListener implements NativeKeyListener
 	}
 
 
-
 	@Override
 	public void nativeKeyReleased(NativeKeyEvent e)
 	{
@@ -70,12 +69,11 @@ public class HotKeyListener implements NativeKeyListener
 
 			}
 		}
-
 	}
 
 	public static void updateHotkey()
 	{
 		INSTANCE.hotKey = HotKey.CURRENT;
-//		System.out.println("listening for " + INSTANCE.hotKey);
+		//		System.out.println("listening for " + INSTANCE.hotKey);
 	}
 }

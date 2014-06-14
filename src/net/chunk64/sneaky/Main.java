@@ -12,15 +12,9 @@ public class Main
 
 	public static void main(String[] args) throws AWTException
 	{
-				new Preferences().load();
-				new GUI();
-		//
-		////		HotKey.CURRENT = new HotKey('p');
-		////		HotKey.CURRENT.setAlt(true);
-				new HotKeyListener();
-
-
-
+		new Preferences().load();
+		new GUI();
+		new HotKeyListener();
 	}
 
 

@@ -10,45 +10,50 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Screenie
 {
 
-	public static File SAVE_DIRECTORY;
 	public static final File DEFAULT_SAVE_DIR = new File(Shell32Util.getFolderPath(ShlObj.CSIDL_MYPICTURES) + "/Screenies/");
-	private static SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH;mm;ss");
+	public static File SAVE_DIRECTORY;
+	public static int NEXT_ID;
+	private static Robot robot;
 
+	static
+	{
+		try
+		{
+			robot = new Robot();
+		} catch (AWTException e)
+		{
+			System.err.println("Could not create robot");
+			e.printStackTrace();
+		}
+	}
 
 	public Screenie()
 	{
-		BufferedImage capture = null;
-		try
-		{
-			WinDef.RECT rect = new WinDef.RECT();
-			User32.INSTANCE.GetWindowRect(User32.INSTANCE.GetForegroundWindow(), rect);
-			Rectangle screenRect = new Rectangle(rect.toRectangle());
-			capture = new Robot().createScreenCapture(screenRect);
-		} catch (AWTException e)
-		{
-			System.err.println("Could not take screenie");
-			e.printStackTrace();
-		}
+		WinDef.RECT rect = new WinDef.RECT();
+		User32.INSTANCE.GetWindowRect(User32.INSTANCE.GetForegroundWindow(), rect);
+		Rectangle screenRect = new Rectangle(rect.toRectangle());
+		BufferedImage capture = robot.createScreenCapture(screenRect);
 
 
 		if (SAVE_DIRECTORY == null)
 			SAVE_DIRECTORY = DEFAULT_SAVE_DIR;
 		try
 		{
-			File saveFile = new File(SAVE_DIRECTORY.getAbsolutePath() + "\\" + format.format(new Date()) + ".png");
-			saveFile.delete();
+			String path = SAVE_DIRECTORY.getAbsolutePath() + "\\" + "Screeny-";
+			File saveFile = null;
+			while (saveFile == null || saveFile.exists())
+				saveFile = new File(path + ++NEXT_ID + ".png");
+
 			saveFile.createNewFile();
 
 			ImageIO.write(capture, "png", saveFile);
 		} catch (IOException e)
 		{
-			System.err.println("Could not save screenie");
+			System.err.println("Could not save screeny");
 			e.printStackTrace();
 		}
 

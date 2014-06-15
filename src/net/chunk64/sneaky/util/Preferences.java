@@ -18,6 +18,7 @@ public class Preferences
 
 	private HotKey hotKey;
 	private File saveDirectory;
+	private int nextID;
 
 	public Preferences()
 	{
@@ -33,7 +34,8 @@ public class Preferences
 
 		properties.clear();
 		properties.setProperty("hotkey", HotKey.CURRENT.getVk() + "," + hotkey.substring(1, hotkey.length() - 1).replace(" ", ""));
-		properties.setProperty("save-dir", saveDirectory.getAbsolutePath());
+		properties.setProperty("save-dir", Screenie.SAVE_DIRECTORY.getAbsolutePath());
+		properties.setProperty("next-id", String.valueOf(Screenie.NEXT_ID));
 
 		try
 		{
@@ -57,6 +59,43 @@ public class Preferences
 
 	}
 
+	private HotKey loadHotkey(Properties properties, String key)
+	{
+		try
+		{
+			return parseHotKey(properties.getProperty(key));
+
+		} catch (Exception e)
+		{
+			return HotKey.createDefault();
+		}
+
+	}
+
+	private Object loadProperty(Properties properties, String key, Object defaultValue)
+	{
+		try
+		{
+			return properties.getProperty(key);
+		} catch (Exception e)
+		{
+			return defaultValue;
+		}
+
+	}
+
+	private Integer loadInteger(Properties properties, String key, int defaultValue)
+	{
+		try
+		{
+			return Integer.parseInt(properties.getProperty(key));
+		} catch (Exception e)
+		{
+			return defaultValue;
+		}
+
+	}
+
 	public void load()
 	{
 		try
@@ -64,26 +103,24 @@ public class Preferences
 			FileInputStream in = new FileInputStream(prefFile);
 			properties.load(in);
 			in.close();
-
-			System.out.println("time to start setting");
-			hotKey = parseHotKey((String) properties.get("hotkey"));
-			saveDirectory = new File((String) properties.get("save-dir"));
-			if (!saveDirectory.exists())
-				saveDirectory = Screenie.DEFAULT_SAVE_DIR;
-		} catch (Exception e)
+		} catch (IOException e)
 		{
-			// defaults
-			System.out.println("loading defaults");
-			hotKey = new HotKey('*', new boolean[]{false, true, true});
-			saveDirectory = Screenie.DEFAULT_SAVE_DIR;
+			System.err.println("Could not load prefs");
+			e.printStackTrace();
 		}
 
-		HotKey.CURRENT = hotKey;
-		if (!saveDirectory.exists())
-			saveDirectory.mkdir();
-		Screenie.SAVE_DIRECTORY = saveDirectory;
+		hotKey = loadHotkey(properties, "hotkey");
+		saveDirectory = new File((String) loadProperty(properties, "save-dir", Screenie.DEFAULT_SAVE_DIR));
+		nextID = loadInteger(properties, "next-id", 0);
 
-		System.out.println("loaded: " + hotKey + " | " + saveDirectory.getPath());
+		if (!saveDirectory.exists())
+			saveDirectory = Screenie.DEFAULT_SAVE_DIR;
+
+		HotKey.CURRENT = hotKey;
+		Screenie.SAVE_DIRECTORY = saveDirectory;
+		Screenie.NEXT_ID = nextID;
+
+		System.out.println("loaded: " + hotKey + " | " + saveDirectory.getPath() + " | " + nextID);
 	}
 
 	private HotKey parseHotKey(String s)

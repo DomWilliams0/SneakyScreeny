@@ -6,15 +6,15 @@ import java.util.Arrays;
 
 public class HotKey
 {
-	/**
-	 * alt, shift, control
-	 */
 
 	public static HotKey CURRENT;
 	public static final int SHIFT = 1;
 	public static final int ALT = 8;
 	public static final int CTRL = 2;
 
+	/**
+	 * ALT, SHIFT, CONTROL
+	 */
 	private boolean[] mods;
 	private char character;
 	private int vk;
@@ -64,6 +64,11 @@ public class HotKey
 	{
 		mods[2] = b;
 		summariseModifiers();
+	}
+
+	public int getVk()
+	{
+		return vk;
 	}
 
 	public void summariseModifiers()
@@ -118,8 +123,10 @@ public class HotKey
 
 	}
 
-	public int getVk()
+	public static HotKey createDefault()
 	{
-		return vk;
+		return new HotKey('+', new boolean[]{false, true, true});
 	}
+
+
 }

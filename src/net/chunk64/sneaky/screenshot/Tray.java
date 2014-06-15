@@ -90,7 +90,7 @@ public class Tray
 
 	public void flash()
 	{
-		icon.displayMessage("", null, TrayIcon.MessageType.INFO);
+		icon.displayMessage(null, "\\('u')/", TrayIcon.MessageType.NONE);
 		executorService.submit(new Flash());
 	}
 
